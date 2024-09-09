@@ -1,0 +1,110 @@
+<div class="container mt-4">
+    <button class="btn btn-success mt-4" (click)="openProductModal()">Crear Producto</button>
+
+    <div class="row pt-2">
+        <div *ngFor="let product of products" class="col-md-2  col-sm-4 col-sx-6 mb-4">
+            <div class="card">
+                <!--<img [src]="product.foto" class="card-img-top" alt="{{ product.nombre }}">-->
+
+                <img *ngIf="product.foto" [src]="product.foto" alt="{{ product.nombre }}" class="card-img-top">
+
+                <div class="card-body">
+                    <h5 class="card-title text_title">{{ product.nombre }}</h5>
+                    <p class="card-text text_description">{{ product.breveDescripcion }}</p>
+                    <p class="card-text text-muted text-end fw-bold">{{ product.precio | currency:'USD' }}</p>
+
+                    <div class="text-end">
+
+                        <button (click)="openDetailModal(product.id ?? 0)" class="btn btn-info btn-sm float-start"
+                            title="Ver detalles"><i class="fa-solid fa-eye"></i></button>
+
+                        <button (click)="openProductModal(product)" class="btn btn-warning btn-sm"
+                            title="Editar producto"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button (click)="addToCart(product.id ?? 0, cantidad)" class="btn btn-primary btn-sm float-end"
+                            title="Añadir al carrito"><i class="fa-solid fa-cart-plus"></i></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">{{ selectedProduct.id ? 'Editar Producto' : 'Crear
+                        Producto' }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form (ngSubmit)="saveProduct()" #productForm="ngForm">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="nombre" [(ngModel)]="selectedProduct.nombre"
+                                name="nombre" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="precio" class="form-label">Precio</label>
+                            <input type="number" class="form-control" id="precio" [(ngModel)]="selectedProduct.precio"
+                                name="precio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="breveDescripcion" class="form-label">Descripción Breve</label>
+                            <textarea class="form-control" id="breveDescripcion"
+                                [(ngModel)]="selectedProduct.breveDescripcion" name="breveDescripcion"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Imagen</label>
+                            <input type="file" class="form-control" id="foto" (change)="onFileSelected($event)"
+                                name="foto">
+                        </div>
+
+                        <!-- Vista previa de la imagen seleccionada -->
+                        <div *ngIf="imagePreview" class="mb-3">
+                            <img [src]="imagePreview" class="img-thumbnail" alt="Vista previa de la imagen"
+                                style="max-width: 200px;">
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Guardar Producto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal datalles-->
+    <div class="modal fade" id="productModalDetail" tabindex="-1" aria-labelledby="productModalDetailLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalDetailLabel">Detalles</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <img *ngIf="selectedProduct.foto" [src]="selectedProduct.foto" alt="{{ selectedProduct.nombre }}" class="card-img-top">
+
+                    <div class="row">
+                        <div class="col-8">
+                            <h6> {{selectedProduct.nombre}} </h6>
+                        </div>
+                        <div class="col-4">
+                            <p class="card-text">{{ selectedProduct.precio | currency:'USD' }}</p>
+                        </div>
+                    </div>
+
+                    <p>{{selectedProduct.breveDescripcion}}</p>
+
+                    <div class="text-center"><button (click)="addToCart(selectedProduct.id ?? 0, cantidad)" class="btn btn-primary btn-sm float-end"
+                        title="Añadir al carrito"><i class="fa-solid fa-cart-plus"></i></button></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

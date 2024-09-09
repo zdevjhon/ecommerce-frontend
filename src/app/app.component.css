@@ -1,0 +1,21 @@
+/* Estilo del modal del carrito */
+.cart-modal {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    left: 0; /* Alineado a la izquierda del contenedor del carrito */
+    top: 100%; /* Justo debajo del ícono del carrito */
+    min-width: 250px;
+    z-index: 1000;
+    border: 1px solid #ddd;
+    background-color: white;
+  }
+  
+  /* Mostrar modal al hacer hover sobre el carrito */
+  .nav-item.position-relative:hover .cart-modal {
+    display: block;
+  }
+
+  .modal_text{
+    font-size: 8px;
+  }
+  

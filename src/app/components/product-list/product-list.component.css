@@ -1,0 +1,75 @@
+/* Usar clases de Bootstrap y agregar solo ajustes personalizados */
+
+/* Ajuste para las tarjetas de productos */
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 0.5rem; /* Más redondeado */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .product-card:hover {
+    transform: scale(1.02); /* Efecto de zoom al pasar el cursor */
+  }
+  
+  /* Ajuste para las imágenes de productos */
+  .product-card img {
+    width: 100%;
+    height: auto;
+  }
+  
+  /* Ajuste para el cuerpo de la tarjeta */
+  .product-card-body {
+    padding: 1rem;
+  }
+  
+  /* Ajuste para el título y la descripción dentro de la tarjeta */
+  .product-card-body h5 {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem; /* Tamaño del título */
+  }
+  
+  .product-card-body p {
+    color: #6c757d; /* Color de texto secundario */
+    font-size: 0.875rem; /* Tamaño de fuente para la descripción */
+  }
+  
+  /* Ajuste para el botón dentro de la tarjeta */
+  .product-card-body .btn {
+    margin-top: 0.5rem;
+  }
+  
+  /* Estilos adicionales para el modal */
+  .modal-header {
+    background-color: #f8f9fa; /* Color de fondo del encabezado del modal */
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .modal-body {
+    padding: 2rem; /* Espaciado más amplio en el cuerpo del modal */
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .modal-footer .btn {
+    margin: 0 0.5rem; /* Espaciado entre botones en el pie del modal */
+  }
+
+  .card-img-top {
+    width: 100%; /* La imagen ocupa el ancho total del card */
+    height: 100px; /* Ajusta la altura fija de la imagen */
+    object-fit: contain; /* Mantiene la imagen centrada y recortada si es necesario */
+    object-position: center; /* Centra la imagen en el contenedor */
+  }
+
+  .text_description{
+    font-size: 10px;
+  }
+  .text_title{
+    font-size: 12px;
+    font-weight: 700;
+  }
