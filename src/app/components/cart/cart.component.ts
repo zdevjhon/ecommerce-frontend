@@ -33,7 +33,7 @@ export class CartComponent implements OnInit {
 
   carritoItem: CarritoItem[] = [];
 
-
+  total_pedido: number = 0;
 
   constructor(private authService: AuthService, private cartService: CartService, private productService: ProductService, private router: Router) {
     this.authService.currentUser.subscribe(user => {
@@ -41,59 +41,33 @@ export class CartComponent implements OnInit {
         this.userId = user.id;
       }
     });
+
+    this.calcularTotal();
   }
 
   ngOnInit(): void {
     //this.userId = this.authService.getCurrentUserId();
-    this.loadCart(); 
+    this.userId = this.authService.getCurrentUserId();
+
+    this.cartService.cartItems$.subscribe(items => {
+      this.carritoItem = items;
+    });
   }
 
-  loadCart(): void {
-    
-    const cart = JSON.parse(localStorage.getItem('tempCart') || '[]');
-    const itemCount = cart.length;
-    console.log('Carrito temporal:', cart, ' cant: ', itemCount);
-    this.carritoItem = cart;
-
-  }
-
-  addToCart(productId: number, quantity: number): void {
-
-    /*if (this.userId && this.productId != null) {
-      this.cartService.addToCart(this.userId, this.productId, this.cantidad).subscribe(
-        response => {
-          console.log('Producto añadido al carrito:', response);
-          this.loadCart(); // Carga el carrito actual
-        },
-        error => {
-          console.error('Error al añadir el producto al carrito', error);
-        }
-      );
-    } else {// no authenticado
-    }*/
-
-    
-    this.productService.getProductById(productId).subscribe(
-      (data) => {
-        this.producto = data;
-        //this.addToCart(productId, this.cantidad, this.producto.nombre, this.producto.precio);
-        this.addToLocalCart(productId, quantity, this.producto.nombre, this.producto.precio);
-
-        this.loadCart();
-      },
-      (error) => {
-        console.error('Error al cargar los detalles del producto', error);
-      }
-    );
-    
+  addToCart(productId: number, cantidad: number): void {   
+    this.cartService.addToCart(productId, cantidad);
   }
 
   realizarCompra(): void {
     const cart = JSON.parse(localStorage.getItem('tempCart') || '[]');
     if (this.userId && cart.length>0) {
-      console.log("proceder con la compra");
-      const cart = JSON.parse(localStorage.getItem('tempCart') || '[]');
-      console.log('Carrito a comprar:', cart,);
+
+      let fecha: string = new Date().toISOString().split('T')[0]; // Fecha en formato YYYY-MM-DD      
+      //console.log("proceder con la compra:: "+this.total_pedido, fecha, this.userId);
+      
+      this.cartService.saveCompleteOrder(this.userId, fecha, 'enviado', this.total_pedido);
+      //this.cartService.vaciarCart();
+
     } else {// no authenticado
       console.log("inisiar  sesion");
       this.router.navigate(['/login']);
@@ -102,29 +76,16 @@ export class CartComponent implements OnInit {
 
   vaciarCart(){
     this.cartService.vaciarCart();
-    this.loadCart();
   }
 
   removeFromCart(cartItemId: number): void {
     this.cartService.removeFromCart(cartItemId);
+  }  
 
-    this.loadCart();
-  }
+  calcularTotal() {
+    const savedCart = JSON.parse(localStorage.getItem('tempCart') || '[]'); 
 
-  private addToLocalCart(productId: number | null, cantidad: number, nombre = '', precio: number | 0): void {
-    if (productId === null) return;
-
-    let cart = JSON.parse(localStorage.getItem('tempCart') || '[]');
-    const itemIndex = cart.findIndex((item: any) => item.productId === productId);
-
-    if (itemIndex > -1) {
-      cart[itemIndex].cantidad += cantidad;
-    } else {
-      cart.push({ productId, cantidad , nombre, precio});
-    }
-
-    localStorage.setItem('tempCart', JSON.stringify(cart));
-    console.log('Producto añadido al carrito temporal:', cart);
+    this.total_pedido = savedCart.reduce((acc: any, item: any) => acc + item.precio * item.cantidad, 0);
   }
 
 }

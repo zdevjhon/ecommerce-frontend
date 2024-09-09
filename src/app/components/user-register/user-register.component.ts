@@ -25,15 +25,24 @@ export class UserRegisterComponent {
   constructor(private userService: UserService) { }
 
   openRegisterModal(): void {
-    const modal = bootstrap.Modal(document.getElementById('registerModal')!);
+    const modalElement = document.getElementById('registerModal')!;
+    const modal = new bootstrap.Modal(modalElement);
     modal.show();
   }
 
   registerUser(): void {
     this.userService.createUser(this.user).subscribe(() => {
       console.log('Usuario registrado');
-      const modal = bootstrap.getInstance(document.getElementById('registerModal')!);
-      modal?.hide();
+
+      this.closeModal('registerModal');
     });
   }
+
+  closeModal(modalname= ''): void {
+    const modalElement = document.getElementById(modalname)!;
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    if (modal) {
+        modal.hide(); // Ocultar el modal
+    }
+}
 }

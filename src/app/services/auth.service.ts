@@ -4,11 +4,13 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { CartService } from './cart.service';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private authUrl = 'http://localhost:8080/api/authenticate'; // URL de la API para autenticar
+  private authUrl = environment.apiUrl+'/api/authenticate'; // URL de la API para autenticar
 
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser = this.currentUserSubject.asObservable();

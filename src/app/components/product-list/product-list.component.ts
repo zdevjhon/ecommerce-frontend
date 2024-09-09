@@ -5,6 +5,8 @@ import { RouterOutlet } from '@angular/router';
 
 import { FormsModule } from '@angular/forms'; // Asegúrate de que esto está presente
 
+import { CanActivate, Router } from '@angular/router';
+
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
@@ -13,6 +15,8 @@ import { CartItem } from '../../models/cart-item.model';
 import { AuthService } from '../../services/auth.service';
 
 import { CarritoItem } from '../../models/items.model';
+
+import { environment } from '../../../environments/environment';
 
 //import { ProductRegisterComponent } from '../../components/product-list/product-register.component'; // Asegúrate de que esto esté presente
 
@@ -34,20 +38,22 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   cartItems: CartItem[] = [];
 
+  private apiUrl = environment.apiUrl+'/images/';
+
   carritoItem: CarritoItem[] = [];
 
   userId: number | null = null;
 
-  cartItemCount: number = 0; // Variable para el conteo del carrito
-
-  cantidad : number = 1;
-
   imagePreview: string | ArrayBuffer | null = null;
   selectedFile: File | null = null;
 
+  total_pedido: number = 0;
+
+  cantidad = 1;
+
   selectedProduct: Product = { id: 0, nombre: '', precio: 0, breveDescripcion: '', foto: '' }; // Asegúrate de que esta propiedad siempre esté definida
 
-  constructor(private productService: ProductService, private cartService: CartService, private authService: AuthService) { }
+  constructor(private productService: ProductService, private cartService: CartService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
 
@@ -55,7 +61,11 @@ export class ProductListComponent implements OnInit {
 
     this.userId = this.authService.getCurrentUserId();
 
-    this.loadCart();    
+    this.cartService.cartItems$.subscribe(items => {
+      this.carritoItem = items;
+      this.total_pedido = this.cartService.calcularTotal(); // Obtener el total cuando se actualiza el carrito
+    });
+
   }
 
   loadProducts(): void {
@@ -67,7 +77,7 @@ export class ProductListComponent implements OnInit {
         this.products.forEach(product => {
           if (product.foto) {
             // Asegúrate de que 'product.foto' contenga la URL correcta para mostrar
-            product.foto = 'http://localhost:8080/images/' + product.foto;
+            product.foto = this.apiUrl + product.foto;
           }
         });
       },
@@ -77,13 +87,20 @@ export class ProductListComponent implements OnInit {
     );
   }
 
-  loadCart(): void {
+  realizarCompra(): void {
     const cart = JSON.parse(localStorage.getItem('tempCart') || '[]');
-    const itemCount = cart.length;
-    console.log('Carrito temporal:::', cart, ' cant: ', itemCount);
-    this.carritoItem = cart;
+    if (this.userId && cart.length>0) {
 
-    console.log('Temporal', this.carritoItem);
+      let fecha: string = new Date().toISOString().split('T')[0]; // Fecha en formato YYYY-MM-DD      
+      //console.log("proceder con la compra:: "+this.total_pedido, fecha, this.userId);
+      
+      this.cartService.saveCompleteOrder(this.userId, fecha, 'enviado', this.total_pedido);
+      //this.cartService.vaciarCart();
+
+    } else {// no authenticado
+      console.log("inisiar  sesion");
+      this.router.navigate(['/login']);
+    }
   }
 
   addToCart(productId: number, cantidad: number): void {   
@@ -105,7 +122,7 @@ export class ProductListComponent implements OnInit {
     this.productService.getProductById(productId).subscribe(
       (data) => {
         this.selectedProduct = data;
-        this.selectedProduct.foto = 'http://localhost:8080/images/' + this.selectedProduct.foto;          
+        this.selectedProduct.foto = this.apiUrl + this.selectedProduct.foto;          
        
         this.openModal(); // Abre el modal después de obtener los datos
       },

@@ -24,8 +24,13 @@
               <td>{{ item.nombre }}</td>
               <td>{{ item.cantidad }}</td>
               <td>{{ item.precio }}</td>
-              <td>{{ item.precio*item.cantidad }}</td>
+              <td>{{ item.precio*item.cantidad | currency}}</td>
               <td><button class="btn btn-danger btn-sm" (click)="removeFromCart(item.productId)">Eliminar</button></td>
+            </tr>
+
+            <tr class="total_purchase">
+              <td colspan="4" class="text-end fw-bold">Total</td>
+              <td class="fw-bold">{{ total_pedido | currency }}</td>
             </tr>
 
           </tbody>

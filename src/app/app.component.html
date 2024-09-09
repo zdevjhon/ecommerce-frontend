@@ -31,10 +31,14 @@
             
             <ul *ngIf="carritoItem.length > 0" class="list-group">
               <li *ngFor="let item of carritoItem" class="list-group-item d-flex justify-content-between align-items-center modal_text">
-                <p class="m-0 col-8">{{ item.nombre }}</p> <p class="m-0 float-end">{{ item.cantidad }}</p><span class="fa fa-trash text-danger" role="button"></span>
+                <p class="m-0 col-8">{{ item.nombre }}</p> <p class="m-0 float-end">{{ item.cantidad }}</p><span class="fa fa-trash text-danger" role="button" (click)="removeFromCart(item.productId)"></span>
                  
               </li>
             </ul>
+
+            <h6 *ngIf="carritoItem.length > 0" class="pt-2 text-end">{{ total_pedido | currency }}</h6>
+
+            <button *ngIf="carritoItem.length > 0" class="btn btn-outline-secondary float-end btn-sm" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" (click)="realizarCompra()">Comprar</button>
             <p *ngIf="carritoItem.length === 0">El carrito está vacío.</p>
           </div>
         </li>
